@@ -1,15 +1,21 @@
 import { useInput } from '../Hooks/Hooks';
+import { useHistory } from 'react-router-dom';
+import { authService } from '../fbase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const Login = () => {
-	const { username, onUsernameChange } = useInput('');
-	const { password, onPasswordChange } = useInput('');
-	const onSubmitLogin = (event) => {
+	const { value: email, onChange: onChangeEmail } = useInput('');
+	const { value: password, onChange: onChangePassword } = useInput('');
+	const history = useHistory();
+	const onSubmitLogin = async (event) => {
 		event.preventDefault();
+		await signInWithEmailAndPassword(authService, email, password);
+		history.push('/');
 	};
 	return (
 		<form onSubmit={onSubmitLogin}>
-			<input type="text" placeholder="Username" value={username} onChange={onUsernameChange} />
-			<input type="password" placeholder="Password" value={password} onChange={onPasswordChange} />
+			<input type="text" placeholder="Email" value={email} onChange={onChangeEmail} />
+			<input type="password" placeholder="Password" value={password} onChange={onChangePassword} />
 			<input type="submit" value="Login" />
 		</form>
 	);

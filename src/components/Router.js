@@ -4,8 +4,7 @@ import Login from '../routers/Login';
 import Intro from '../routers/Intro';
 import AlbumHome from '../routers/AlbumHome';
 
-const AppRouter = () => {
-	const isLoggedIn = false;
+const AppRouter = ({ isLoggedIn, userObj }) => {
 	return (
 		<HashRouter>
 			<Switch>
