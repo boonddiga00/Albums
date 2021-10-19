@@ -1,36 +1,41 @@
 import { useEffect, useState } from 'react';
-import AppRouter from './Router';
-import { authService, db } from '../fbase';
+import AppRouter from 'components/Router';
+import { authService, db } from 'fbase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 
 const App = () => {
-	const [userObj, setUserObj] = useState(null);
-	const [isLoading, setIsLoading] = useState(false);
+	const [currentUser, setCurrentUser] = useState(null);
+	const [isLoading, setIsLoading] = useState(true);
 	const getUserDataFromFirestore = async (uid) => {
 		const userRef = doc(db, 'users', uid);
 		const userSnap = await getDoc(userRef);
 		const user = userSnap.data();
 		return user;
 	};
+	console.log(currentUser)
 	useEffect(() => {
-		onAuthStateChanged(authService, (authUser) => {
+		onAuthStateChanged(authService, async (authUser) => {
 			if (authUser) {
 				const { uid } = authUser;
-				const user = getUserDataFromFirestore(uid);
-				setUserObj(user);
+				const user = await getUserDataFromFirestore(uid);
+				setCurrentUser(user);
 			} else {
-				setUserObj(null);
+				setCurrentUser(null);
 			}
-			setIsLoading(true);
+			setIsLoading(false);
 		});
 	}, []);
 	return isLoading ? (
-		<main>
-			<AppRouter isLoggedIn={userObj} userObj={userObj} />
-		</main>
-	) : (
 		<p>Loading...</p>
+	) : (
+		<main>
+			<AppRouter
+				isLoggedIn={currentUser}
+				currentUser={currentUser}
+				getUserDataFromFirestore={getUserDataFromFirestore}
+			/>
+		</main>
 	);
 };
 

@@ -1,18 +1,30 @@
-import { HashRouter, Switch, Route } from 'react-router-dom';
-import Join from '../routers/Join';
-import Login from '../routers/Login';
-import Intro from '../routers/Intro';
-import AlbumHome from '../routers/AlbumHome';
-import UploadAlbum from '../routers/AlbumHome';
+import { HashRouter, Switch, Route, Link } from 'react-router-dom';
+import Join from 'routers/global/Join';
+import Login from 'routers/global/Login';
+import Intro from 'routers/Intro';
+import UserHome from 'routers/user/UserHome';
+import EditProfile from 'routers//user/EditProfile';
+import UploadAlbum from 'routers/UploadAlbum';
 
-const AppRouter = ({ isLoggedIn, userObj }) => {
+const AppRouter = ({ isLoggedIn, currentUser, getUserDataFromFirestore }) => {
 	return (
 		<HashRouter>
+			<nav>
+				<ul>
+					{isLoggedIn && <Link to={`/user/${currentUser.uid}`}>Profile</Link>}
+				</ul>
+			</nav>
 			<Switch>
 				{isLoggedIn ? (
 					<>
-						<Route exact path="/">
-							<AlbumHome />
+						<Route exact path="/user/:uid">
+							<UserHome
+								currentUser={currentUser}
+								getUserDataFromFirestore={getUserDataFromFirestore}
+							/>
+						</Route>
+						<Route exact path="/user/:uid/edit">
+							<EditProfile currentUser={currentUser} />
 						</Route>
 						<Route exact path="/album/upload">
 							<UploadAlbum />
