@@ -11,7 +11,16 @@ const AppRouter = ({ isLoggedIn, currentUser, getUserDataFromFirestore }) => {
 		<HashRouter>
 			<nav>
 				<ul>
-					{isLoggedIn && <Link to={`/user/${currentUser.uid}`}>Profile</Link>}
+					{isLoggedIn && (
+						<>
+							<li>
+								<Link to={`/user/${currentUser.uid}`}>Profile</Link>
+							</li>
+							<li>
+								<Link to={`/user/${currentUser.uid}/edit`}>Edit Profile</Link>
+							</li>
+						</>
+					)}
 				</ul>
 			</nav>
 			<Switch>
