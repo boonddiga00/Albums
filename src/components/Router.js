@@ -1,4 +1,4 @@
-import { HashRouter, Switch, Route, Link } from 'react-router-dom';
+import { HashRouter, Switch, Route, Link, Redirect } from 'react-router-dom';
 import Join from 'routers/global/Join';
 import Login from 'routers/global/Login';
 import Intro from 'routers/Intro';
@@ -19,6 +19,9 @@ const AppRouter = ({ isLoggedIn, currentUser, getUserDataFromFirestore }) => {
 							<li>
 								<Link to={`/user/${currentUser.uid}/edit`}>Edit Profile</Link>
 							</li>
+							<li>
+								<Link to="/album/upload">Upload Album</Link>
+							</li>
 						</>
 					)}
 				</ul>
@@ -38,6 +41,7 @@ const AppRouter = ({ isLoggedIn, currentUser, getUserDataFromFirestore }) => {
 						<Route exact path="/album/upload">
 							<UploadAlbum />
 						</Route>
+						<Redirect to={`/user/${currentUser.uid}`} />
 					</>
 				) : (
 					<>
