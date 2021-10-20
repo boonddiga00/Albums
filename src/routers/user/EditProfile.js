@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
-import { db } from 'fbase';
+import { db, storageService } from 'fbase';
 import { doc, updateDoc } from 'firebase/firestore';
+import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 
 const EditProfile = ({ currentUser }) => {
 	const [preview, setPreview] = useState('');
@@ -32,10 +33,11 @@ const EditProfile = ({ currentUser }) => {
 	const onSubmitProfilePhoto = async (event) => {
 		event.preventDefault();
 		if (preview) {
-			const docRef = doc(db, 'users', currentUser.uid);
-			await updateDoc(docRef, {
-				photoURL: preview,
-			});
+			const storageRef = ref(storageService, `profile/${currentUser.uid}`);
+			await uploadString(storageRef, preview, 'data_url');
+			const uploadedProfileURL = await getDownloadURL(storageRef);
+			const docRef = doc(db, '/users', currentUser.uid);
+			await updateDoc(docRef, { photoURL: uploadedProfileURL });
 		}
 	};
 	return (
