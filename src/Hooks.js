@@ -8,5 +8,5 @@ export const useInput = (initailValue) => {
 		} = event;
 		setValue(value);
 	};
-	return { value, onChange };
+	return [value, onChange];
 };

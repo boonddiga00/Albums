@@ -5,9 +5,9 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 
 const Join = () => {
-	const { value: inputEmail, onChange: onChangeInputEmail } = useInput('');
-	const { value: username, onChange: onChangeUsername } = useInput('');
-	const { value: password, onChange: onChangePassword } = useInput('');
+	const [inputEmail, onChangeInputEmail] = useInput('');
+	const [username, onChangeUsername] = useInput('');
+	const [password, onChangePassword] = useInput('');
 	const history = useHistory();
 	const onSubmitJoin = async (event) => {
 		event.preventDefault();

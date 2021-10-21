@@ -6,7 +6,7 @@ import UserHome from 'routers/user/UserHome';
 import EditProfile from 'routers//user/EditProfile';
 import UploadAlbum from 'routers/UploadAlbum';
 
-const AppRouter = ({ isLoggedIn, currentUser, getUserDataFromFirestore }) => {
+const AppRouter = ({ isLoggedIn, currentUser, setCurrentUser, getUserDataFromFirestore }) => {
 	return (
 		<HashRouter>
 			<nav>
@@ -36,7 +36,11 @@ const AppRouter = ({ isLoggedIn, currentUser, getUserDataFromFirestore }) => {
 							/>
 						</Route>
 						<Route exact path="/user/:uid/edit">
-							<EditProfile currentUser={currentUser} />
+							<EditProfile
+								currentUser={currentUser}
+								setCurrentUser={setCurrentUser}
+								getUserDataFromFirestore={getUserDataFromFirestore}
+							/>
 						</Route>
 						<Route exact path="/album/upload">
 							<UploadAlbum />

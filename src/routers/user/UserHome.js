@@ -28,6 +28,7 @@ const UserHome = ({ currentUser, getUserDataFromFirestore }) => {
 			<div>
 				<img src={user.photoURL} alt="Profile" title="Profile" width="100px" height="100px" />
 				<h1>{user.username}'s Home</h1>
+				{user.description && <h4>{user.description}</h4>}
 				<div>
 					<h2>Best Moments</h2>
 				</div>

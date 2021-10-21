@@ -33,6 +33,7 @@ const App = () => {
 			<AppRouter
 				isLoggedIn={currentUser}
 				currentUser={currentUser}
+				setCurrentUser={setCurrentUser}
 				getUserDataFromFirestore={getUserDataFromFirestore}
 			/>
 		</main>

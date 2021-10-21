@@ -4,8 +4,8 @@ import { authService } from 'fbase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const Login = () => {
-	const { value: email, onChange: onChangeEmail } = useInput('');
-	const { value: password, onChange: onChangePassword } = useInput('');
+	const [email, onChangeEmail] = useInput('');
+	const [password, onChangePassword] = useInput('');
 	const history = useHistory();
 	const onSubmitLogin = async (event) => {
 		event.preventDefault();
