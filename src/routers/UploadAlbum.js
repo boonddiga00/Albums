@@ -1,32 +1,83 @@
 import { useState } from 'react';
 import { useInput } from 'Hooks';
+import { db, storageService } from 'fbase';
+import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
+import { collection, addDoc } from 'firebase/firestore';
+import { v4 as uuidv4 } from 'uuid';
 
-const UploadAlbum = () => {
-	const [albumImage, setAlbumImage] = useState([]);
-	const { value: title, onChange: onChangeTitle } = useInput('');
-	const { value: description, onChange: onChangeDescription } = useInput('');
-	const onChangeFile = (event) => {
+const UploadAlbum = ({ currentUser }) => {
+	const [error, setError] = useState('');
+	const [albumThumnailFile, setAlbumThumnailFile] = useState('');
+	const [albumImageFiles, setAlbumImageFiles] = useState([]);
+	const [title, onChangeTitle] = useInput('');
+	const [description, onChangeDescription] = useInput('');
+	const onChangeAlbumImage = (event) => {
 		const {
 			target: { files },
 		} = event;
-		setAlbumImage(files);
+		setAlbumImageFiles(files);
 	};
-	const onSubmit = (event) => {
+	const onChangeAlbumThumnail = (event) => {
+		const {
+			target: { files },
+		} = event;
+		setAlbumThumnailFile(files[0]);
+	};
+	const uploadThumnail = async () => {
+		const thumnailStorageRef = ref(storageService, `${currentUser.uid}/album/thumnail/${uuidv4()}`);
+		await uploadBytes(thumnailStorageRef, albumThumnailFile);
+		const thumnailUrl = await getDownloadURL(thumnailStorageRef);
+		return thumnailUrl;
+	};
+	const uploadAlbumImages = async () => {
+		let albumImages = [];
+		for (let i = 0; i < albumImageFiles.length; i++) {
+			const albumImagesStorageRef = ref(
+				storageService,
+				`${currentUser.uid}/album/albumImage/${uuidv4()}`
+			);
+			await uploadBytes(albumImagesStorageRef, albumImageFiles[i]);
+			const albumImageUrl = await getDownloadURL(albumImagesStorageRef);
+			albumImages.push(albumImageUrl);
+		}
+		return albumImages;
+	};
+	const addAlbumToDB = async (thumnail, albumImages) => {
+		const albumDbRef = collection(db, 'albums');
+		const albumDbSnap = await addDoc(albumDbRef, {
+			title,
+			description,
+			thumnail,
+			albumImages,
+			owner: currentUser.uid,
+		});
+		console.log(albumDbSnap);
+	};
+	const onSubmitAlbum = async (event) => {
 		event.preventDefault();
+		if (!albumThumnailFile || !albumImageFiles || !title || !description) {
+			setError('You should fill every Field');
+			return;
+		}
+		const thumnail = await uploadThumnail();
+		const albumImages = await uploadAlbumImages();
+		await addAlbumToDB(thumnail, albumImages);
 	};
 	return (
-		<form onSubmit={onSubmit}>
+		<form onSubmit={onSubmitAlbum}>
+			{error && <span>{error}</span>}
 			<div>
-				<input type="file" />
-				<input value={title} onChange={onChangeTitle} type="text" placeholder="title" />
+				<input onChange={onChangeAlbumThumnail} type="file" required />
+				<input value={title} onChange={onChangeTitle} type="text" placeholder="Title" required />
 			</div>
 			<input
 				value={description}
 				onChange={onChangeDescription}
 				type="text"
-				placeholder="description"
+				placeholder="Description"
+				required
 			/>
-			<input onChange={onChangeFile} type="file" multiple={true} />
+			<input onChange={onChangeAlbumImage} type="file" multiple={true} required />
 			<input type="submit" value="Make an New Album" />
 		</form>
 	);

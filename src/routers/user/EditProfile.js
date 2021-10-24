@@ -40,7 +40,7 @@ const EditProfile = ({ currentUser, setCurrentUser, getUserDataFromFirestore }) 
 		}
 		const docRef = doc(db, '/users', currentUser.uid);
 		if (preview) {
-			const storageRef = ref(storageService, `profile/${currentUser.uid}`);
+			const storageRef = ref(storageService, `${currentUser.uid}/profile/main`);
 			await uploadString(storageRef, preview, 'data_url');
 			const uploadedProfileURL = await getDownloadURL(storageRef);
 

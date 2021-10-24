@@ -43,7 +43,7 @@ const AppRouter = ({ isLoggedIn, currentUser, setCurrentUser, getUserDataFromFir
 							/>
 						</Route>
 						<Route exact path="/album/upload">
-							<UploadAlbum />
+							<UploadAlbum currentUser={currentUser} />
 						</Route>
 						<Redirect to={`/user/${currentUser.uid}`} />
 					</>
