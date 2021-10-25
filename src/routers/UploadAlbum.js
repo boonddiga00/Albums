@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useInput } from 'Hooks';
 import { db, storageService } from 'fbase';
 import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, doc, addDoc, updateDoc } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 
 const UploadAlbum = ({ currentUser }) => {
@@ -51,7 +51,9 @@ const UploadAlbum = ({ currentUser }) => {
 			albumImages,
 			owner: currentUser.uid,
 		});
-		console.log(albumDbSnap);
+		const { path } = albumDbSnap;
+		const userDbRef = doc(db, 'users', currentUser.uid);
+		const updateSnap = await updateDoc(userDbRef, { albums: [path] });
 	};
 	const onSubmitAlbum = async (event) => {
 		event.preventDefault();
