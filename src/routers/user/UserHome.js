@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
+import Albums from 'components/Albums';
 
 const UserHome = ({ currentUser, getUserDataFromFirestore }) => {
 	const { uid } = useParams();
@@ -8,7 +9,6 @@ const UserHome = ({ currentUser, getUserDataFromFirestore }) => {
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		console.log('rendering...');
 		if (currentUser.uid === uid) {
 			setUser(currentUser);
 			setIsLoading(false);
@@ -34,7 +34,7 @@ const UserHome = ({ currentUser, getUserDataFromFirestore }) => {
 				</div>
 			</div>
 			<div>
-				<h2>Albums</h2>
+				<Albums user={user} currentUser={currentUser} location={location} />
 			</div>
 		</>
 	);
