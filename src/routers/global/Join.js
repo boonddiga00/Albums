@@ -1,8 +1,8 @@
 import { useHistory } from 'react-router-dom';
 import { useInput } from 'Hooks';
-import { authService, db } from 'fbase';
+import { setUserByIdOnFirebase } from 'fbase/firestoreFunctions';
+import { authService } from 'fbase/firebaseInstance';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
 
 const Join = () => {
 	const [inputEmail, onChangeInputEmail] = useInput('');
@@ -15,7 +15,7 @@ const Join = () => {
 			user: { uid, email, photoURL },
 		} = await createUserWithEmailAndPassword(authService, inputEmail, password);
 		try {
-			await setDoc(doc(db, 'users', uid), {
+			await setUserByIdOnFirebase(uid, {
 				uid,
 				username,
 				email,

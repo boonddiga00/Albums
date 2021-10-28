@@ -1,12 +1,11 @@
 import { useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useInput } from 'Hooks';
-import { db, storageService } from 'fbase';
-import { doc, updateDoc } from 'firebase/firestore';
-import { ref, uploadString, getDownloadURL } from 'firebase/storage';
+import { getUserByIdFromFirebase, updatUserByIdOnFirebase } from 'fbase/firestoreFunctions';
+import { uploadStringToFirebase } from 'fbase/storageFunctions';
 import EditProfileImage from 'components/EditProfileImage';
 
-const EditProfile = ({ currentUser, setCurrentUser, getUserDataFromFirestore }) => {
+const EditProfile = ({ currentUser, setCurrentUser }) => {
 	const [preview, setPreview] = useState('');
 	const [username, onChangeUsername] = useInput(currentUser.username || '');
 	const [description, onChangeDescription] = useInput(currentUser.description || '');
@@ -18,21 +17,19 @@ const EditProfile = ({ currentUser, setCurrentUser, getUserDataFromFirestore }) 
 			return;
 		}
 		submitBtn.current.disabled = true;
-		const docRef = doc(db, '/users', currentUser.uid);
+		const { uid } = currentUser;
 		if (preview) {
-			const storageRef = ref(storageService, `${currentUser.uid}/profile/main`);
-			await uploadString(storageRef, preview, 'data_url');
-			const uploadedProfileURL = await getDownloadURL(storageRef);
-
-			await updateDoc(docRef, { photoURL: uploadedProfileURL });
+			const STORAGE_PATH = `${currentUser.uid}/profile/main`;
+			const uploadedProfileURL = await uploadStringToFirebase(preview, STORAGE_PATH, 'data_url');
+			await updatUserByIdOnFirebase(uid, { photoURL: uploadedProfileURL });
 		}
 		if (username !== currentUser.username) {
-			await updateDoc(docRef, { username });
+			await updatUserByIdOnFirebase(uid, { username });
 		}
 		if (description !== currentUser.description) {
-			await updateDoc(docRef, { description });
+			await updatUserByIdOnFirebase(uid, { description });
 		}
-		const updatedCurrentUser = await getUserDataFromFirestore(currentUser.uid);
+		const updatedCurrentUser = await getUserByIdFromFirebase(currentUser.uid);
 		setCurrentUser(updatedCurrentUser);
 		history.push(`/user/${currentUser.uid}`);
 	};

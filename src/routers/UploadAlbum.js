@@ -1,14 +1,15 @@
 import { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useInput } from 'Hooks';
-import { db, storageService } from 'fbase';
-import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
-import { collection, doc, addDoc, updateDoc } from 'firebase/firestore';
+import { uploadBytesTofirebase, uploadMultipleFilesToFirebase } from 'fbase/storageFunctions';
+import { addDocToFirebase, updatUserByIdOnFirebase } from 'fbase/firestoreFunctions';
 import { v4 as uuidv4 } from 'uuid';
 
 const UploadAlbum = ({ currentUser }) => {
 	const [error, setError] = useState('');
 	const [albumThumnailFile, setAlbumThumnailFile] = useState('');
 	const [albumImageFiles, setAlbumImageFiles] = useState([]);
+	const history = useHistory();
 	const [title, onChangeTitle] = useInput('');
 	const [description, onChangeDescription] = useInput('');
 	const onChangeAlbumImage = (event) => {
@@ -23,47 +24,36 @@ const UploadAlbum = ({ currentUser }) => {
 		} = event;
 		setAlbumThumnailFile(files[0]);
 	};
-	const uploadThumnail = async () => {
-		const thumnailStorageRef = ref(storageService, `${currentUser.uid}/album/thumnail/${uuidv4()}`);
-		await uploadBytes(thumnailStorageRef, albumThumnailFile);
-		const thumnailUrl = await getDownloadURL(thumnailStorageRef);
-		return thumnailUrl;
-	};
-	const uploadAlbumImages = async () => {
-		let albumImages = [];
-		for (let i = 0; i < albumImageFiles.length; i++) {
-			const albumImagesStorageRef = ref(
-				storageService,
-				`${currentUser.uid}/album/albumImage/${uuidv4()}`
-			);
-			await uploadBytes(albumImagesStorageRef, albumImageFiles[i]);
-			const albumImageUrl = await getDownloadURL(albumImagesStorageRef);
-			albumImages.push(albumImageUrl);
-		}
-		return albumImages;
-	};
 	const addAlbumToDB = async (thumnail, albumImages) => {
-		const albumDbRef = collection(db, 'albums');
-		const albumDbSnap = await addDoc(albumDbRef, {
+		const albumObj = {
 			title,
 			description,
 			thumnail,
 			albumImages,
 			owner: currentUser.uid,
-		});
-		const { path } = albumDbSnap;
-		const userDbRef = doc(db, 'users', currentUser.uid);
-		const updateSnap = await updateDoc(userDbRef, { albums: [path] });
+		};
+		const albumDocRef = await addDocToFirebase('albums', albumObj);
+		return albumDocRef;
 	};
 	const onSubmitAlbum = async (event) => {
 		event.preventDefault();
+		const { uid, albums } = currentUser;
 		if (!albumThumnailFile || !albumImageFiles || !title || !description) {
 			setError('You should fill every Field');
 			return;
 		}
-		const thumnail = await uploadThumnail();
-		const albumImages = await uploadAlbumImages();
-		await addAlbumToDB(thumnail, albumImages);
+		const THUMNAIL_STORAGE_PATH = `${uid}/album/thumnail/${uuidv4()}`;
+		const ALBUM_IMAGE_STORAGE_PATH = `${uid}/album/albumImage`;
+		const thumnail = await uploadBytesTofirebase(albumThumnailFile, THUMNAIL_STORAGE_PATH);
+		const albumImages = await uploadMultipleFilesToFirebase(
+			albumImageFiles,
+			ALBUM_IMAGE_STORAGE_PATH
+		);
+		const albumDocRef = await addAlbumToDB(thumnail, albumImages);
+		const { path } = albumDocRef;
+		const ownedAlbums = albums ? [...albums, path] : [path];
+		await updatUserByIdOnFirebase(uid, { albums: ownedAlbums });
+		history.push(`/user/${uid}`);
 	};
 	return (
 		<form onSubmit={onSubmitAlbum}>

@@ -1,6 +1,6 @@
 import { useInput } from 'Hooks';
 import { useHistory } from 'react-router-dom';
-import { authService } from 'fbase';
+import { authService } from 'fbase/firebaseInstance';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const Login = () => {

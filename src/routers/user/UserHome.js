@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
+import { getUserByIdFromFirebase } from 'fbase/firestoreFunctions';
 import Albums from 'components/Albums';
 
-const UserHome = ({ currentUser, getUserDataFromFirestore }) => {
+const UserHome = ({ currentUser }) => {
 	const { uid } = useParams();
 	const location = useLocation();
 	const [user, setUser] = useState(null);
@@ -14,13 +15,13 @@ const UserHome = ({ currentUser, getUserDataFromFirestore }) => {
 			setIsLoading(false);
 		} else {
 			const getUserByParamAndSetUser = async () => {
-				const userData = await getUserDataFromFirestore(uid);
+				const userData = await getUserByIdFromFirebase(uid);
 				setUser(userData);
 				setIsLoading(false);
 			};
 			getUserByParamAndSetUser();
 		}
-	}, [location, currentUser, getUserDataFromFirestore, uid]);
+	}, [location, currentUser, uid]);
 	return isLoading ? (
 		<p>Loading...</p>
 	) : (
