@@ -1,10 +1,10 @@
 import { HashRouter, Switch, Route, Link, Redirect } from 'react-router-dom';
-import Join from 'routers/global/Join';
-import Login from 'routers/global/Login';
-import Intro from 'routers/Intro';
-import UserHome from 'routers/user/UserHome';
-import EditProfile from 'routers//user/EditProfile';
-import UploadAlbum from 'routers/UploadAlbum';
+import Join from 'Routers/Join';
+import Login from 'Routers/Login';
+import Intro from 'Routers/Intro';
+import Profile from 'Routers/Profile';
+import EditProfile from 'Routers/EditProfile';
+import UploadAlbum from 'Routers/UploadAlbum';
 
 const AppRouter = ({ isLoggedIn, currentUser, setCurrentUser }) => {
 	return (
@@ -29,21 +29,24 @@ const AppRouter = ({ isLoggedIn, currentUser, setCurrentUser }) => {
 			<Switch>
 				{isLoggedIn ? (
 					<>
-						<Route exact path="/user/:uid">
-							<UserHome
-								currentUser={currentUser}
-							/>
+						<Route exact path="/">
+							<Redirect to={'/user/' + currentUser.uid} />
 						</Route>
+						<Route
+							exact
+							path="/user/:uid"
+							render={({
+								match: {
+									params: { uid },
+								},
+							}) => <Profile key={uid} currentUser={currentUser} />}
+						/>
 						<Route exact path="/user/:uid/edit">
-							<EditProfile
-								currentUser={currentUser}
-								setCurrentUser={setCurrentUser}
-							/>
+							<EditProfile currentUser={currentUser} setCurrentUser={setCurrentUser} />
 						</Route>
 						<Route exact path="/album/upload">
 							<UploadAlbum currentUser={currentUser} />
 						</Route>
-						<Redirect to={`/user/${currentUser.uid}`} />
 					</>
 				) : (
 					<>
@@ -56,7 +59,6 @@ const AppRouter = ({ isLoggedIn, currentUser, setCurrentUser }) => {
 						<Route exact path="/login">
 							<Login />
 						</Route>
-						<Redirect to="/" />
 					</>
 				)}
 			</Switch>

@@ -32,6 +32,28 @@ export const getDocFromFirebase = async (PATH) => {
 
 export const addDocToFirebase = async (PATH, obj) => {
 	const ref = collection(dbService, PATH);
-		const docRef = await addDoc(ref, obj);
-		return docRef;
-} 
+	const docRef = await addDoc(ref, obj);
+	return docRef;
+};
+
+export const getMultipleData = async (arr) => {
+	if (!arr) {
+		return [];
+	}
+	let dataArr = [];
+	for (let i = 0; i < arr.length; i++) {
+		const data = await getDocFromFirebase(arr[i]);
+		dataArr.push(data);
+	}
+	return dataArr;
+};
+
+export const getPopulatedUserById = async (uid) => {
+	const userRef = doc(dbService, 'users', uid);
+	const userSnap = await getDoc(userRef);
+	const user = userSnap.data();
+	const { albums } = user;
+	const albumData = await getMultipleData(albums);
+	user.albums = albumData;
+	return user;
+};

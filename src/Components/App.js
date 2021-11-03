@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import AppRouter from 'components/Router';
+import AppRouter from 'Components/Router';
 import { authService } from 'fbase/firebaseInstance';
 import { getUserByIdFromFirebase } from 'fbase/firestoreFunctions';
 import { onAuthStateChanged } from 'firebase/auth';

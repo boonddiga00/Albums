@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { useInput } from 'Hooks';
 import { getUserByIdFromFirebase, updatUserByIdOnFirebase } from 'fbase/firestoreFunctions';
 import { uploadStringToFirebase } from 'fbase/storageFunctions';
-import EditProfileImage from 'components/EditProfileImage';
+import EditProfileImage from 'Components/EditProfileImage';
 
 const EditProfile = ({ currentUser, setCurrentUser }) => {
 	const [preview, setPreview] = useState('');
