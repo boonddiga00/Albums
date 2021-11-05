@@ -10,3 +10,25 @@ export const useInput = (initailValue) => {
 	};
 	return [value, onChange];
 };
+
+export const useOnChangeFiles = () => {
+	const [data, setData] = useState([]);
+	const onChangeFiles = (event) => {
+		const {
+			target: { files },
+		} = event;
+		setData(files);
+	};
+	return [data, onChangeFiles];
+};
+
+export const useOnChangeFile = () => {
+	const [data, setData] = useState([]);
+	const onChangeFiles = (event) => {
+		const {
+			target: { files },
+		} = event;
+		setData(files[0]);
+	};
+	return [data, onChangeFiles];
+};

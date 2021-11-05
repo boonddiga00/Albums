@@ -19,6 +19,10 @@ const App = () => {
 			setIsLoading(false);
 		});
 	}, []);
+	const refreshUser = async () => {
+		const user = await getUserByIdFromFirebase(currentUser.uid);
+		setCurrentUser(user);
+	}
 	return isLoading ? (
 		<p>Loading...</p>
 	) : (
@@ -27,6 +31,7 @@ const App = () => {
 				isLoggedIn={currentUser}
 				currentUser={currentUser}
 				setCurrentUser={setCurrentUser}
+				refreshUser={refreshUser}
 			/>
 		</main>
 	);

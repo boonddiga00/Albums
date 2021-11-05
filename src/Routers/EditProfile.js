@@ -1,11 +1,11 @@
 import { useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useInput } from 'Hooks';
-import { getUserByIdFromFirebase, updatUserByIdOnFirebase } from 'fbase/firestoreFunctions';
+import { updateUserByIdOnFirebase } from 'fbase/firestoreFunctions';
 import { uploadStringToFirebase } from 'fbase/storageFunctions';
 import EditProfileImage from 'Components/EditProfileImage';
 
-const EditProfile = ({ currentUser, setCurrentUser }) => {
+const EditProfile = ({ currentUser, refreshUser }) => {
 	const [preview, setPreview] = useState('');
 	const [username, onChangeUsername] = useInput(currentUser.username || '');
 	const [description, onChangeDescription] = useInput(currentUser.description || '');
@@ -21,16 +21,15 @@ const EditProfile = ({ currentUser, setCurrentUser }) => {
 		if (preview) {
 			const STORAGE_PATH = `${currentUser.uid}/profile/main`;
 			const uploadedProfileURL = await uploadStringToFirebase(preview, STORAGE_PATH, 'data_url');
-			await updatUserByIdOnFirebase(uid, { photoURL: uploadedProfileURL });
+			await updateUserByIdOnFirebase(uid, { photoURL: uploadedProfileURL });
 		}
 		if (username !== currentUser.username) {
-			await updatUserByIdOnFirebase(uid, { username });
+			await updateUserByIdOnFirebase(uid, { username });
 		}
 		if (description !== currentUser.description) {
-			await updatUserByIdOnFirebase(uid, { description });
+			await updateUserByIdOnFirebase(uid, { description });
 		}
-		const updatedCurrentUser = await getUserByIdFromFirebase(currentUser.uid);
-		setCurrentUser(updatedCurrentUser);
+		refreshUser();
 		history.push(`/user/${currentUser.uid}`);
 	};
 	return (

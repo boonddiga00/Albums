@@ -13,7 +13,7 @@ export const setUserByIdOnFirebase = async (uid, userObj) => {
 	await setDoc(userRef, userObj);
 };
 
-export const updatUserByIdOnFirebase = async (uid, userObj) => {
+export const updateUserByIdOnFirebase = async (uid, userObj) => {
 	const userDbRef = doc(dbService, 'users', uid);
 	await updateDoc(userDbRef, userObj);
 };

@@ -6,7 +6,7 @@ import Profile from 'Routers/Profile';
 import EditProfile from 'Routers/EditProfile';
 import UploadAlbum from 'Routers/UploadAlbum';
 
-const AppRouter = ({ isLoggedIn, currentUser, setCurrentUser }) => {
+const AppRouter = ({ isLoggedIn, currentUser, refreshUser }) => {
 	return (
 		<HashRouter>
 			<nav>
@@ -42,10 +42,10 @@ const AppRouter = ({ isLoggedIn, currentUser, setCurrentUser }) => {
 							}) => <Profile key={uid} currentUser={currentUser} />}
 						/>
 						<Route exact path="/user/:uid/edit">
-							<EditProfile currentUser={currentUser} setCurrentUser={setCurrentUser} />
+							<EditProfile currentUser={currentUser} refreshUser={refreshUser} />
 						</Route>
 						<Route exact path="/album/upload">
-							<UploadAlbum currentUser={currentUser} />
+							<UploadAlbum currentUser={currentUser} refreshUser={refreshUser} />
 						</Route>
 					</>
 				) : (

@@ -3,7 +3,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import { getPopulatedUserById } from 'fbase/firestoreFunctions';
 import ProfilePresenter from 'Routers/Profile/ProfilePresenter';
 
-const useUser = () => {
+const usePopulatedUser = () => {
 	const { uid } = useParams();
 	const location = useLocation();
 	const [populatedUser, setPopulatedUser] = useState(null);
@@ -20,7 +20,7 @@ const useUser = () => {
 };
 
 const ProfileContainer = ({ currentUser }) => {
-	const user = useUser();
+	const user = usePopulatedUser();
 	return <ProfilePresenter user={user} />;
 };
 
