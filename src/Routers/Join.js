@@ -20,6 +20,7 @@ const Join = () => {
 				username,
 				email,
 				photoURL,
+				albums: []
 			});
 		} catch (error) {
 			console.error('Error adding document: ', error);

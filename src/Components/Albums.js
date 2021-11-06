@@ -1,25 +1,18 @@
+import { Link } from "react-router-dom";
+
 const Albums = ({ user: { albums } }) => {
 	return albums ? (
 		<div>
-			<h1>Albums</h1>
+			<h2>Albums</h2>
 			{albums.map(({ thumnail, albumImages, description, title }) => (
-				<div>
+				<Link>
+					<div style={{ border: '1px solid black', width: "200px" }}>
 					<img src={thumnail} alt="Thumnail" title="Thumnail" width="200px" height="200px" />
-					<div>
-						{albumImages.map((albumImage, index) => (
-							<img
-								key={index}
-								src={albumImage}
-								alt="Album"
-								title="Album"
-								width="200px"
-								height="200px"
-							/>
-						))}
-					</div>
-					<h1>{title}</h1>
-					<h2>{description}</h2>
+					<h4>{title}</h4>
+					<p>{description}</p>
 				</div>
+				</Link>
+				
 			))}
 		</div>
 	) : (
