@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useInput } from 'Hooks';
 import { updateUserByIdOnFirebase } from 'fbase/firestoreFunctions';
-import { uploadStringToFirebase } from 'fbase/storageFunctions';
+import { uploadProfileImageToFirebase } from 'fbase/storageFunctions';
 import EditProfileImage from 'Components/EditProfileImage';
 
 const EditProfile = ({ currentUser, refreshUser }) => {
@@ -19,8 +19,7 @@ const EditProfile = ({ currentUser, refreshUser }) => {
 		submitBtn.current.disabled = true;
 		const { uid } = currentUser;
 		if (preview) {
-			const STORAGE_PATH = `${currentUser.uid}/profile/main`;
-			const uploadedProfileURL = await uploadStringToFirebase(preview, STORAGE_PATH, 'data_url');
+			const uploadedProfileURL = await uploadProfileImageToFirebase(uid, preview, 'data_url');
 			await updateUserByIdOnFirebase(uid, { photoURL: uploadedProfileURL });
 		}
 		if (username !== currentUser.username) {
