@@ -2,27 +2,28 @@ import { storageService } from 'fbase/firebaseInstance';
 import { ref, getDownloadURL, uploadString, uploadBytes } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 
-export const uploadStringToFirebase = async (fileData, PATH, DATA_TYPE) => {
-	const fileStorageRef = ref(storageService, PATH);
+export const uploadProfileImageToFirebase = async (uid, fileData, DATA_TYPE) => {
+	const fileStorageRef = ref(storageService, `${uid}/profile/main`);
 	await uploadString(fileStorageRef, fileData, DATA_TYPE);
 	const fileUrl = await getDownloadURL(fileStorageRef);
 	return fileUrl;
 };
 
-export const uploadBytesTofirebase = async (fileData, PATH) => {
-	const fileStorageRef = ref(storageService, PATH);
+export const uploadThumnailTofirebase = async (fileData, uid) => {
+	const fileStorageRef = ref(storageService, `${uid}/album/thumnail/${uuidv4()}`);
 	await uploadBytes(fileStorageRef, fileData);
 	const fileUrl = await getDownloadURL(fileStorageRef);
 	return fileUrl;
 };
 
-export const uploadMultipleFilesToFirebase = async (filesArray, PATH) => {
-	let fileUrls = [];
-	for (let i = 0; i < filesArray.length; i++) {
-		const filesStorageRef = ref(storageService, PATH + '/' + uuidv4());
-		await uploadBytes(filesStorageRef, filesArray[i]);
-		const uploadeFileUrl = await getDownloadURL(filesStorageRef);
-		fileUrls.push(uploadeFileUrl);
-	}
+export const uploadAlbumImagesToFirebase = async (fileList, uid) => {
+	const filesArray = [...fileList];
+	const fileUrls = await Promise.all(
+		filesArray.map(async (file) => {
+			const filesStorageRef = ref(storageService, `${uid}/album/albumImage/${uuidv4()}`);
+			await uploadBytes(filesStorageRef, file);
+			return getDownloadURL(filesStorageRef);
+		})
+	);
 	return fileUrls;
 };

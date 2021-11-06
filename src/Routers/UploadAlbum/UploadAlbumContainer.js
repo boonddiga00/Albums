@@ -1,15 +1,12 @@
 import { useHistory } from 'react-router-dom';
 import { useInput, useOnChangeFile, useOnChangeFiles } from 'Hooks';
-import { uploadBytesTofirebase, uploadMultipleFilesToFirebase } from 'fbase/storageFunctions';
+import { uploadThumnailTofirebase, uploadAlbumImagesToFirebase } from 'fbase/storageFunctions';
 import { addDocToFirebase, updateUserByIdOnFirebase } from 'fbase/firestoreFunctions';
-import { v4 as uuidv4 } from 'uuid';
 import UploadAlbumPresenter from 'Routers/UploadAlbum/UploadAlbumPresenter';
 
 const uploadAlbumToStorage = async (uid, thumanil, albumImages) => {
-	const THUMNAIL_STORAGE_PATH = `${uid}/album/thumnail/${uuidv4()}`;
-	const ALBUM_IMAGE_STORAGE_PATH = `${uid}/album/albumImage/${uuidv4()}`;
-	const thumnailUrl = await uploadBytesTofirebase(thumanil, THUMNAIL_STORAGE_PATH);
-	const albumImagesUrl = await uploadMultipleFilesToFirebase(albumImages, ALBUM_IMAGE_STORAGE_PATH);
+	const thumnailUrl = await uploadThumnailTofirebase(thumanil, uid);
+	const albumImagesUrl = await uploadAlbumImagesToFirebase(albumImages, uid);
 	return [thumnailUrl, albumImagesUrl];
 };
 

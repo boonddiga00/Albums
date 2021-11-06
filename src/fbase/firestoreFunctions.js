@@ -37,14 +37,7 @@ export const addDocToFirebase = async (PATH, obj) => {
 };
 
 export const getMultipleData = async (arr) => {
-	if (!arr) {
-		return [];
-	}
-	let dataArr = [];
-	for (let i = 0; i < arr.length; i++) {
-		const data = await getDocFromFirebase(arr[i]);
-		dataArr.push(data);
-	}
+	const dataArr = await Promise.all(arr.map((path) => getDocFromFirebase(path)));
 	return dataArr;
 };
 
