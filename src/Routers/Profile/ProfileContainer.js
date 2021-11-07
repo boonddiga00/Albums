@@ -21,7 +21,7 @@ const usePopulatedUser = () => {
 
 const ProfileContainer = ({ currentUser }) => {
 	const user = usePopulatedUser();
-	return <ProfilePresenter user={user} />;
+	return <ProfilePresenter user={user || {}} />;
 };
 
 export default ProfileContainer;

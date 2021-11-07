@@ -30,6 +30,14 @@ export const getDocFromFirebase = async (PATH) => {
 	return data;
 };
 
+export const getDocWithId = async (PATH) => {
+	const dataRef = doc(dbService, PATH);
+	const dataSnap = await getDoc(dataRef);
+	const id = await dataSnap.id;
+	const data = await dataSnap.data();
+	return { id, ...data };
+};
+
 export const addDocToFirebase = async (PATH, obj) => {
 	const ref = collection(dbService, PATH);
 	const docRef = await addDoc(ref, obj);
@@ -37,7 +45,7 @@ export const addDocToFirebase = async (PATH, obj) => {
 };
 
 export const getMultipleData = async (arr) => {
-	const dataArr = await Promise.all(arr.map((path) => getDocFromFirebase(path)));
+	const dataArr = await Promise.all(arr.map((path) => getDocWithId(path)));
 	return dataArr;
 };
 
