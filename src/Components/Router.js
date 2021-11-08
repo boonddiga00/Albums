@@ -21,7 +21,7 @@ const AppRouter = ({ isLoggedIn, currentUser, refreshUser }) => {
 								<Link to={`/user/${currentUser.uid}/edit`}>Edit Profile</Link>
 							</li>
 							<li>
-								<Link to="/album/upload">Upload Album</Link>
+								<Link to="/albums/upload">Upload Album</Link>
 							</li>
 						</>
 					)}
@@ -45,14 +45,14 @@ const AppRouter = ({ isLoggedIn, currentUser, refreshUser }) => {
 						<Route exact path="/user/:uid/edit">
 							<EditProfile currentUser={currentUser} refreshUser={refreshUser} />
 						</Route>
+						<Route exact path="/albums/upload">
+							<UploadAlbum currentUser={currentUser} refreshUser={refreshUser} />
+						</Route>
 						<Route
 							exact
 							path="/album/:id"
 							render={(props) => <Album key={props.match.params.id} />}
 						/>
-						<Route exact path="/album/upload">
-							<UploadAlbum currentUser={currentUser} refreshUser={refreshUser} />
-						</Route>
 					</>
 				) : (
 					<>

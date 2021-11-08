@@ -4,6 +4,7 @@ const UploadAlbumPresenter = ({
 	titleInput,
 	descriptionInput,
 	onSubmitAlbum,
+	btnRef
 }) => {
 	return (
 		<form onSubmit={onSubmitAlbum}>
@@ -13,7 +14,7 @@ const UploadAlbumPresenter = ({
 			</div>
 			<input {...descriptionInput} type="text" placeholder="Description" required />
 			<input onChange={onChangeAblumImages} type="file" multiple={true} required />
-			<input type="submit" value="Make an New Album" />
+			<input ref={btnRef} type="submit" value="Make an New Album" />
 		</form>
 	);
 };

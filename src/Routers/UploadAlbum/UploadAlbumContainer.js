@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useInput, useOnChangeFile, useOnChangeFiles } from 'Hooks';
 import { uploadThumnailTofirebase, uploadAlbumImagesToFirebase } from 'fbase/storageFunctions';
@@ -22,16 +23,17 @@ const UploadAlbumContainer = ({ currentUser, refreshUser }) => {
 	const [albumImages, onChangeAblumImages] = useOnChangeFiles();
 	const [title, onChangeTitle] = useInput('');
 	const [description, onChangeDescription] = useInput('');
+	const btnRef = useRef();
 	const history = useHistory();
 
 	const titleInput = { value: title, onChange: onChangeTitle };
 	const descriptionInput = { value: description, onChange: onChangeDescription };
-
 	const onSubmitAlbum = async (event) => {
 		event.preventDefault();
 		if (!thumnail || !albumImages || !title || !description) {
 			return;
 		}
+		btnRef.current.disabled = true;
 		const [thumnailUrl, albumImagesUrl] = await uploadAlbumToStorage(
 			currentUser.uid,
 			thumnail,
@@ -57,6 +59,7 @@ const UploadAlbumContainer = ({ currentUser, refreshUser }) => {
 			titleInput={titleInput}
 			descriptionInput={descriptionInput}
 			onSubmitAlbum={onSubmitAlbum}
+			btnRef={btnRef}
 		/>
 	);
 };

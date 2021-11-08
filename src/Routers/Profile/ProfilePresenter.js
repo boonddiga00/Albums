@@ -1,5 +1,5 @@
 import React from 'react';
-import Albums from 'Components/Albums';
+import AlbumCover from 'Components/AlbumCover';
 
 const ProfilePresenter = ({ user }) => {
 	return (
@@ -23,7 +23,7 @@ const ProfilePresenter = ({ user }) => {
 					</div>
 				</div>
 				<div>
-					<Albums user={user} />
+					<AlbumCover user={user} />
 				</div>
 			</>
 		)

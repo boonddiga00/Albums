@@ -11,7 +11,7 @@ const useAlbum = () => {
 		const { state } = location;
 		if (!state) {
 			const getAlbum = async () => {
-				const albumData = await getDocFromFirebase("albums/" + id);
+				const albumData = await getDocFromFirebase('albums/' + id);
 				setAlbum(albumData);
 			};
 			getAlbum();
@@ -23,13 +23,14 @@ const useAlbum = () => {
 
 const Album = () => {
 	const album = useAlbum();
+	const { thumnail, title, description, albumImages } = album ? album : {};
 	return (
 		album && (
 			<>
-				<img src={album.thumnail} title="Album Cover" alt="Album Cover" width="350px" height="350px" />
-				<h1>{album.title}</h1>
-				<p>{album.description}</p>
-				{album.albumImages.map((albumImage, index) => (
+				<img src={thumnail} title="Album Cover" alt="Album Cover" width="350px" height="350px" />
+				<h1>{title}</h1>
+				<p>{description}</p>
+				{albumImages.map((albumImage, index) => (
 					<img
 						key={index}
 						src={albumImage}
