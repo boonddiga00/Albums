@@ -6,6 +6,8 @@ import Profile from 'Routers/Profile';
 import EditProfile from 'Routers/EditProfile';
 import Album from 'Routers/Album';
 import UploadAlbum from 'Routers/UploadAlbum';
+import Trending from 'Routers/Trending';
+import Search from 'Routers/Search';
 
 const AppRouter = ({ isLoggedIn, currentUser, refreshUser }) => {
 	return (
@@ -21,17 +23,23 @@ const AppRouter = ({ isLoggedIn, currentUser, refreshUser }) => {
 								<Link to={`/user/${currentUser.uid}/edit`}>Edit Profile</Link>
 							</li>
 							<li>
-								<Link to="/albums/upload">Upload Album</Link>
+								<Link to="/upload">Upload Album</Link>
+							</li>
+							<li>
+								<Link to="/search">Search</Link>
 							</li>
 						</>
 					)}
 				</ul>
 			</nav>
 			<Switch>
+				<Route exact path="/search">
+					<Search />
+				</Route>
 				{isLoggedIn ? (
 					<>
 						<Route exact path="/">
-							<Redirect to={'/user/' + currentUser.uid} />
+							<Trending />
 						</Route>
 						<Route
 							exact
@@ -45,7 +53,7 @@ const AppRouter = ({ isLoggedIn, currentUser, refreshUser }) => {
 						<Route exact path="/user/:uid/edit">
 							<EditProfile currentUser={currentUser} refreshUser={refreshUser} />
 						</Route>
-						<Route exact path="/albums/upload">
+						<Route exact path="/upload">
 							<UploadAlbum currentUser={currentUser} refreshUser={refreshUser} />
 						</Route>
 						<Route
