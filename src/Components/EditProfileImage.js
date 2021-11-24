@@ -6,9 +6,9 @@ const EditProfileImage = ({ currentUser, preview, setPreview }) => {
 	const onClickChangeBtn = (event) => {
 		event.preventDefault();
 		if (!isEditing) {
-			changeBtn.current.innerText = 'Cancle';
+			changeBtn.current.textContent = 'Cancle';
 		} else {
-			changeBtn.current.innerText = 'Cancle';
+			changeBtn.current.textContent = 'Cancle';
 			setPreview('');
 		}
 		setIsEditing((prev) => !prev);

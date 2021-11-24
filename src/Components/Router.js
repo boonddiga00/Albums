@@ -14,6 +14,9 @@ const AppRouter = ({ isLoggedIn, currentUser, refreshUser }) => {
 		<HashRouter>
 			<nav>
 				<ul>
+					<li>
+						<Link to="/">Trending</Link>
+					</li>
 					{isLoggedIn && (
 						<>
 							<li>
