@@ -19,9 +19,9 @@ const usePopulatedUser = () => {
 	return populatedUser;
 };
 
-const ProfileContainer = ({ currentUser }) => {
+const ProfileContainer = ({ currentUser, refreshUser }) => {
 	const user = usePopulatedUser();
-	return <ProfilePresenter user={user || {}} />;
+	return <ProfilePresenter currentUser={currentUser} user={user || {}} refreshUser={refreshUser} />;
 };
 
 export default ProfileContainer;

@@ -51,7 +51,7 @@ const AppRouter = ({ isLoggedIn, currentUser, refreshUser }) => {
 								match: {
 									params: { uid },
 								},
-							}) => <Profile key={uid} currentUser={currentUser} />}
+							}) => <Profile key={uid} currentUser={currentUser} refreshUser={refreshUser} />}
 						/>
 						<Route exact path="/user/:uid/edit">
 							<EditProfile currentUser={currentUser} refreshUser={refreshUser} />
