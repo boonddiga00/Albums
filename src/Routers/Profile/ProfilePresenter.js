@@ -1,7 +1,7 @@
 import React from 'react';
 import AlbumCover from 'Components/AlbumCover';
 
-const ProfilePresenter = ({ currentUser, user, refreshUser }) => {
+const ProfilePresenter = ({ user }) => {
 	return (
 		user && (
 			<>
@@ -23,7 +23,7 @@ const ProfilePresenter = ({ currentUser, user, refreshUser }) => {
 					</div>
 				</div>
 				<div>
-					<AlbumCover currentUser={currentUser} user={user} refreshUser={refreshUser} />
+					<AlbumCover user={user} />
 				</div>
 			</>
 		)

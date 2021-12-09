@@ -1,6 +1,8 @@
-import {useState, useRef} from "react";
+import { useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
 
-const EditProfileImage = ({ currentUser, preview, setPreview }) => {
+const EditProfileImage = ({ preview, setPreview }) => {
+	const { currentUser } = useSelector((state) => state);
 	const [isEditing, setIsEditing] = useState(false);
 	const changeBtn = useRef();
 	const onClickChangeBtn = (event) => {
@@ -13,7 +15,7 @@ const EditProfileImage = ({ currentUser, preview, setPreview }) => {
 		}
 		setIsEditing((prev) => !prev);
 	};
-		const onChangeProfilePhoto = (event) => {
+	const onChangeProfilePhoto = (event) => {
 		const {
 			target: { files },
 		} = event;

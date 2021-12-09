@@ -1,11 +1,15 @@
+import { useSelector, useDispatch } from 'react-redux';
 import { useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useInput } from 'Hooks';
 import { updateUserByIdOnFirebase } from 'fbase/firestoreFunctions';
 import { uploadProfileImageToFirebase } from 'fbase/storageFunctions';
+import { getAuthAsync } from 'Store/Actions/authAction';
 import EditProfileImage from 'Components/EditProfileImage';
 
-const EditProfile = ({ currentUser, refreshUser }) => {
+const EditProfile = () => {
+	const { currentUser } = useSelector((state) => state);
+	const dispatch = useDispatch();
 	const [preview, setPreview] = useState('');
 	const [username, onChangeUsername] = useInput(currentUser.username || '');
 	const [description, onChangeDescription] = useInput(currentUser.description || '');
@@ -28,12 +32,12 @@ const EditProfile = ({ currentUser, refreshUser }) => {
 		if (description !== currentUser.description) {
 			await updateUserByIdOnFirebase(uid, { description });
 		}
-		refreshUser();
-		history.push(`/user/${currentUser.uid}`);
+		dispatch(getAuthAsync(uid));
+		history.push(`/user/${uid}`);
 	};
 	return (
 		<form onSubmit={onSubmitProfileEdit}>
-			<EditProfileImage currentUser={currentUser} preview={preview} setPreview={setPreview} />
+			<EditProfileImage preview={preview} setPreview={setPreview} />
 			<label htmlFor="username">Username</label>
 			<input
 				id="username"

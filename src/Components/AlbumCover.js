@@ -1,11 +1,15 @@
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { deleteAlbum } from 'fbase/firestoreFunctions';
+import { getAuthAsync } from 'Store/Actions/authAction';
 
-const AlbumCover = ({ currentUser, user, refreshUser }) => {
+const AlbumCover = ({ user }) => {
+	const { currentUser } = useSelector((state) => state);
+	const dispatch = useDispatch();
 	const { albums } = user;
 	const onClickDeleteBtn = (albumId, userId) => {
 		deleteAlbum(albumId, userId);
-		refreshUser();
+		dispatch(getAuthAsync(currentUser.uid));
 	};
 	return albums ? (
 		<div>

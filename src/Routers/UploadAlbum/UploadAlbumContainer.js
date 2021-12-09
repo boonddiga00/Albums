@@ -1,3 +1,5 @@
+import { useSelector, useDispatch } from 'react-redux';
+import { getAuthAsync } from 'Store/Actions/authAction';
 import { useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useInput, useOnChangeFile, useOnChangeFiles } from 'Hooks';
@@ -18,7 +20,9 @@ const updateUserAlbums = async (userObj, newAlbum) => {
 	await updateUserByIdOnFirebase(uid, { albums: updatedAlbum });
 };
 
-const UploadAlbumContainer = ({ currentUser, refreshUser }) => {
+const UploadAlbumContainer = () => {
+	const { currentUser } = useSelector((state) => state);
+	const dispatch = useDispatch();
 	const [thumnail, onChangeThumnail] = useOnChangeFile();
 	const [albumImages, onChangeAblumImages] = useOnChangeFiles();
 	const [title, onChangeTitle] = useInput('');
@@ -48,7 +52,7 @@ const UploadAlbumContainer = ({ currentUser, refreshUser }) => {
 		};
 		const uploadedNewAlbum = await addDocToFirebase('albums', newAlbumObj);
 		await updateUserAlbums(currentUser, uploadedNewAlbum);
-		refreshUser();
+		dispatch(getAuthAsync(currentUser.uid));
 		history.push(`/user/${currentUser.uid}`);
 	};
 
