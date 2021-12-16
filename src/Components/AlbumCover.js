@@ -1,14 +1,17 @@
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteAlbum } from 'fbase/firestoreFunctions';
 import { getAuthAsync } from 'Store/Actions/authAction';
 
 const AlbumCover = ({ user }) => {
+	const deleteButton = useRef();
 	const { currentUser } = useSelector((state) => state);
 	const dispatch = useDispatch();
 	const { albums } = user;
-	const onClickDeleteBtn = (albumId, userId) => {
-		deleteAlbum(albumId, userId);
+	const onClickDeleteBtn = async (albumId, userId) => {
+		deleteButton.current.disabled = true;
+		await deleteAlbum(albumId, userId);
 		dispatch(getAuthAsync(currentUser.uid));
 	};
 	return albums ? (
@@ -27,7 +30,9 @@ const AlbumCover = ({ user }) => {
 						</div>
 					</Link>
 					{currentUser.uid === user.uid && (
-						<button onClick={() => onClickDeleteBtn(id, currentUser.uid)}>Delete</button>
+						<button ref={deleteButton} onClick={() => onClickDeleteBtn(id, currentUser.uid)}>
+							Delete
+						</button>
 					)}
 				</div>
 			))}

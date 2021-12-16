@@ -6,7 +6,6 @@ const useAlbum = () => {
 	const { id } = useParams();
 	const location = useLocation();
 	const [album, setAlbum] = useState(location.state || null);
-
 	useEffect(() => {
 		const { state } = location;
 		if (!state) {

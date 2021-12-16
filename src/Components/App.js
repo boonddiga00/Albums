@@ -1,3 +1,4 @@
+import GlobalStyles from 'Styles/GlobalStyles';
 import { useEffect } from 'react';
 import AppRouter from 'Components/Router';
 import { authService } from 'fbase/firebaseInstance';
@@ -18,7 +19,14 @@ const App = () => {
 			}
 		});
 	}, [dispatch]);
-	return loading ? <p>Loading...</p> : <AppRouter />;
+	return loading ? (
+		<p>Loading...</p>
+	) : (
+		<>
+			<GlobalStyles />
+			<AppRouter />
+		</>
+	);
 };
 
 export default App;
