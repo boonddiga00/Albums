@@ -1,21 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { getDocFromFirebase } from 'fbase/firestoreFunctions';
+import { getAlbumById } from 'fbase/functions/albumFunctions';
 
 const useAlbum = () => {
 	const { id } = useParams();
 	const location = useLocation();
 	const [album, setAlbum] = useState(location.state || null);
 	useEffect(() => {
-		const { state } = location;
-		if (!state) {
-			const getAlbum = async () => {
-				const albumData = await getDocFromFirebase('albums/' + id);
+		if (!album) {
+			const getAlbumAndSetState = async () => {
+				const albumData = await getAlbumById(id);
 				setAlbum(albumData);
 			};
-			getAlbum();
+			getAlbumAndSetState();
 		}
-	}, [location, id]);
+	}, [location, id, album]);
 
 	return album;
 };
@@ -29,16 +28,18 @@ const Album = () => {
 				<img src={thumnail} title="Album Cover" alt="Album Cover" width="350px" height="350px" />
 				<h1>{title}</h1>
 				<p>{description}</p>
-				{albumImages.map((albumImage, index) => (
-					<img
-						key={index}
-						src={albumImage}
-						title="Album"
-						alt="Album"
-						width="300px"
-						height="300px"
-					/>
-				))}
+				<div>
+					{albumImages.map((albumImage, index) => (
+						<img
+							key={index}
+							src={albumImage}
+							title="Album"
+							alt="Album"
+							width="300px"
+							height="300px"
+						/>
+					))}
+				</div>
 			</>
 		)
 	);

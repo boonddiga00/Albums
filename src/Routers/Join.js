@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useHistory, Link } from 'react-router-dom';
 import { useInput } from 'Hooks';
-import { setUserByIdOnFirebase } from 'fbase/firestoreFunctions';
+import { setUserById } from 'fbase/functions/userFunctions';
 import { authService } from 'fbase/firebaseInstance';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
@@ -80,7 +80,7 @@ const Join = () => {
 			user: { uid, email, photoURL },
 		} = await createUserWithEmailAndPassword(authService, inputEmail, password);
 		try {
-			await setUserByIdOnFirebase(uid, {
+			await setUserById(uid, {
 				uid,
 				username,
 				email,

@@ -1,7 +1,7 @@
 import { Route, Redirect } from 'react-router-dom';
 import Profile from 'Routers/Profile';
 import EditProfile from 'Routers/EditProfile';
-import Album from 'Routers/Album';
+import AlbumDetail from 'Routers/AlbumDetail';
 import UploadAlbum from 'Routers/UploadAlbum';
 
 const PrivateRouter = () => {
@@ -25,7 +25,11 @@ const PrivateRouter = () => {
 			<Route exact path="/upload">
 				<UploadAlbum />
 			</Route>
-			<Route exact path="/album/:id" render={(props) => <Album key={props.match.params.id} />} />
+			<Route
+				exact
+				path="/album/:id"
+				render={(props) => <AlbumDetail key={props.match.params.id} />}
+			/>
 		</>
 	);
 };

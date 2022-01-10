@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams, useLocation } from 'react-router-dom';
-import { getPopulatedUserById } from 'fbase/firestoreFunctions';
+import { getPopulatedUserById } from 'fbase/functions/multiFunctions';
 import ProfilePresenter from 'Routers/Profile/ProfilePresenter';
 
 const usePopulatedUser = () => {
@@ -14,8 +14,8 @@ const usePopulatedUser = () => {
 
 	useEffect(() => {
 		const getUserByParamAndSetUser = async () => {
-			const userData = await getPopulatedUserById(uid);
-			setPopulatedUser(userData);
+			const populatedUser = await getPopulatedUserById(uid);
+			setPopulatedUser(populatedUser);
 		};
 		getUserByParamAndSetUser();
 	}, [location, uid, albums]);

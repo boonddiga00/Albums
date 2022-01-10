@@ -1,18 +1,18 @@
-import { getUserByIdFromFirebase } from 'fbase/firestoreFunctions';
+import { getUserById } from 'fbase/functions/userFunctions';
 
 const getAuthAction = (user) => {
 	return {
 		type: 'GET_AUTH',
 		auth: {
 			currentUser: user,
-			loading: false
-		}
+			loading: false,
+		},
 	};
 };
 
 export const getAuthAsync = (uid) => {
 	return async (dispatch) => {
-		const user = await getUserByIdFromFirebase(uid);
+		const user = await getUserById(uid);
 		dispatch(getAuthAction(user));
 	};
 };
@@ -22,7 +22,7 @@ export const resetAuthAction = () => {
 		type: 'RESET_AUTH',
 		auth: {
 			currentUser: null,
-			loading: false
-		}
-	}
-}
+			loading: false,
+		},
+	};
+};

@@ -3,21 +3,21 @@ import { getAuthAsync } from 'Store/Actions/authAction';
 import { useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useInput, useOnChangeFile, useOnChangeFiles } from 'Hooks';
-import { uploadThumnailTofirebase, uploadAlbumImagesToFirebase } from 'fbase/storageFunctions';
-import { addDocToFirebase, updateUserByIdOnFirebase } from 'fbase/firestoreFunctions';
+import { uploadThumnail, uploadAlbumImages } from 'fbase/functions/storageFunctions';
+import { updateUserById } from 'fbase/functions/userFunctions';
+import { addAlbum } from 'fbase/functions/albumFunctions';
 import UploadAlbumPresenter from 'Routers/UploadAlbum/UploadAlbumPresenter';
 
 const uploadAlbumToStorage = async (uid, thumanil, albumImages) => {
-	const thumnailUrl = await uploadThumnailTofirebase(thumanil, uid);
-	const albumImagesUrl = await uploadAlbumImagesToFirebase(albumImages, uid);
-	return [thumnailUrl, albumImagesUrl];
+	const thumnailUrl = await uploadThumnail(uid, thumanil);
+	const albumImagesUrl = await uploadAlbumImages(uid, albumImages);
+	return { thumnail: thumnailUrl, albumImages: albumImagesUrl };
 };
 
-const updateUserAlbums = async (userObj, newAlbum) => {
+const updateUsersAlbum = async (userObj, albumId) => {
 	const { uid, albums } = userObj;
-	const { path } = newAlbum;
-	const updatedAlbum = [...albums, path];
-	await updateUserByIdOnFirebase(uid, { albums: updatedAlbum });
+	const updatedAlbum = [...albums, albumId];
+	await updateUserById(uid, { albums: updatedAlbum });
 };
 
 const UploadAlbumContainer = () => {
@@ -30,31 +30,28 @@ const UploadAlbumContainer = () => {
 	const btnRef = useRef();
 	const history = useHistory();
 
-	const titleInput = { value: title, onChange: onChangeTitle };
-	const descriptionInput = { value: description, onChange: onChangeDescription };
 	const onSubmitAlbum = async (event) => {
 		event.preventDefault();
 		if (!thumnail || !albumImages || !title || !description) {
 			return;
 		}
 		btnRef.current.disabled = true;
-		const [thumnailUrl, albumImagesUrl] = await uploadAlbumToStorage(
-			currentUser.uid,
-			thumnail,
-			albumImages
-		);
+		
+		const albumThumnailAndImages = await uploadAlbumToStorage(currentUser.uid, thumnail, albumImages);
 		const newAlbumObj = {
 			title,
 			description,
-			thumnail: thumnailUrl,
-			albumImages: albumImagesUrl,
+			...albumThumnailAndImages,
 			owner: currentUser.uid,
 		};
-		const uploadedNewAlbum = await addDocToFirebase('albums', newAlbumObj);
-		await updateUserAlbums(currentUser, uploadedNewAlbum);
+		const albumId = await addAlbum(newAlbumObj);
+		await updateUsersAlbum(currentUser, albumId);
 		dispatch(getAuthAsync(currentUser.uid));
 		history.push(`/user/${currentUser.uid}`);
 	};
+
+	const titleInput = { value: title, onChange: onChangeTitle };
+	const descriptionInput = { value: description, onChange: onChangeDescription };
 
 	return (
 		<UploadAlbumPresenter

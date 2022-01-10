@@ -2,8 +2,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useInput } from 'Hooks';
-import { updateUserByIdOnFirebase } from 'fbase/firestoreFunctions';
-import { uploadProfileImageToFirebase } from 'fbase/storageFunctions';
+import { updateUserById } from 'fbase/functions/userFunctions';
+import { uploadProfileImage } from 'fbase/functions/storageFunctions';
 import { getAuthAsync } from 'Store/Actions/authAction';
 import EditProfileImage from 'Components/EditProfileImage';
 
@@ -23,14 +23,14 @@ const EditProfile = () => {
 		submitBtn.current.disabled = true;
 		const { uid } = currentUser;
 		if (preview) {
-			const uploadedProfileURL = await uploadProfileImageToFirebase(uid, preview, 'data_url');
-			await updateUserByIdOnFirebase(uid, { photoURL: uploadedProfileURL });
+			const uploadedProfileURL = await uploadProfileImage(uid, preview);
+			await updateUserById(uid, { photoURL: uploadedProfileURL });
 		}
 		if (username !== currentUser.username) {
-			await updateUserByIdOnFirebase(uid, { username });
+			await updateUserById(uid, { username });
 		}
 		if (description !== currentUser.description) {
-			await updateUserByIdOnFirebase(uid, { description });
+			await updateUserById(uid, { description });
 		}
 		dispatch(getAuthAsync(uid));
 		history.push(`/user/${uid}`);

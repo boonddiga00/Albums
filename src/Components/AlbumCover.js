@@ -1,27 +1,29 @@
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteAlbum } from 'fbase/firestoreFunctions';
+import { deleteAlbum } from 'fbase/functions/multiFunctions';
 import { getAuthAsync } from 'Store/Actions/authAction';
 
-const AlbumCover = ({ user }) => {
-	const deleteButton = useRef();
-	const { currentUser } = useSelector((state) => state);
+const AlbumCover = ({ uid, albums }) => {
 	const dispatch = useDispatch();
-	const { albums } = user;
-	const onClickDeleteBtn = async (albumId, userId) => {
-		deleteButton.current.disabled = true;
-		await deleteAlbum(albumId, userId);
-		dispatch(getAuthAsync(currentUser.uid));
+	const { currentUser } = useSelector((state) => state);
+	const deleteButton = useRef();
+
+	const onClickDeleteBtn = async (albumId) => {
+		await deleteAlbum(albumId, uid);
+		dispatch(getAuthAsync(uid));
 	};
+
 	return albums ? (
 		<div>
 			<h2>Albums</h2>
 			{albums.map(({ id, thumnail, albumImages, description, title }, index) => (
 				<div key={index}>
 					<Link
-						key={index}
-						to={{ pathname: `/album/${id}`, state: { thumnail, albumImages, description, title } }}
+						to={{
+							pathname: `/album/${id}`,
+							state: { id, thumnail, albumImages, description, title },
+						}}
 					>
 						<div style={{ border: '1px solid black', width: '200px' }}>
 							<img src={thumnail} alt="Thumnail" title="Thumnail" width="200px" height="200px" />
@@ -29,8 +31,8 @@ const AlbumCover = ({ user }) => {
 							<p>{description}</p>
 						</div>
 					</Link>
-					{currentUser.uid === user.uid && (
-						<button ref={deleteButton} onClick={() => onClickDeleteBtn(id, currentUser.uid)}>
+					{currentUser.uid === uid && (
+						<button ref={deleteButton} onClick={(e) => onClickDeleteBtn(id)}>
 							Delete
 						</button>
 					)}

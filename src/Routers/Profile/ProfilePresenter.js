@@ -1,29 +1,37 @@
 import React from 'react';
 import AlbumCover from 'Components/AlbumCover';
+import { logOut } from 'fbase/functions/authFunctions';
+import { useHistory } from 'react-router-dom';
 
 const ProfilePresenter = ({ user }) => {
+	const { photoURL, username, description, uid, albums } = user;
+	const history = useHistory();
+	const onClickLogOut = () => {
+		logOut();
+		history.push('/login');
+	};
 	return (
 		user && (
 			<>
 				<div>
 					<img
 						src={
-							user.photoURL ||
-							'https://cdn0.iconfinder.com/data/icons/set-ui-app-android/32/8-512.png'
+							photoURL || 'https://cdn0.iconfinder.com/data/icons/set-ui-app-android/32/8-512.png'
 						}
 						alt="Profile"
 						title="Profile"
 						width="100px"
 						height="100px"
 					/>
-					<h1>{user.username}'s Home</h1>
-					{user.description && <h4>{user.description}</h4>}
+					<h1>{username}'s Home</h1>
+					{description && <h4>{description}</h4>}
+					<button onClick={onClickLogOut}>Log Out</button>
 					<div>
 						<h2>Best Moments</h2>
 					</div>
 				</div>
 				<div>
-					<AlbumCover user={user} />
+					<AlbumCover uid={uid} albums={albums} />
 				</div>
 			</>
 		)
