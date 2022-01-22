@@ -5,7 +5,6 @@ import { setUserById } from 'fbase/functions/userFunctions';
 import JoinPresenter from 'Routers/Join/JoinPresenter';
 
 const makeUserObj = ({ uid, email, username }) => {
-	console.log(email, username);
 	return { uid, username, email, photoURL: null, albums: [] };
 };
 
@@ -17,14 +16,16 @@ const Join = () => {
 	const {
 		register,
 		handleSubmit,
-		formState: { erorrs },
+		formState: { errors },
 		setError,
+		setValue,
 	} = useForm();
 	const history = useHistory();
 	const onSubmit = async (data) => {
 		const { email, username, password, password1 } = data;
 		if (password !== password1) {
 			setError('password1', { message: 'Passwords do not match.' }, { shouldFocus: true });
+			setValue('password1', '');
 			return;
 		}
 		try {
@@ -32,9 +33,13 @@ const Join = () => {
 			await addUserOnDb({ uid, email, username });
 			history.push(`/user/${uid}`);
 		} catch (error) {
-			console.log(error);
+			if(error.code === "auth/weak-password") {
+				setError('extraError', {message: 'Password is to Short.'});
+			} else {
+				setError('extraError', {message: 'Something went wrong, please try again.'})
+			}
 		}
 	};
-	return <JoinPresenter onSubmit={handleSubmit(onSubmit)} register={register} erorrs={erorrs} />;
+	return <JoinPresenter onSubmit={handleSubmit(onSubmit)} register={register} errors={errors} />;
 };
 export default Join;

@@ -65,8 +65,14 @@ const LoginLink = styled(Link)`
 	text-decoration: underline;
 `;
 
-const JoinPresenter = ({ onSubmit, register, erorrs }) => {
-	const emailRegister = register('email', { required: 'Email is required' });
+const JoinPresenter = ({ onSubmit, register, errors }) => {
+	const emailRegister = register('email', {
+		required: 'Email is required',
+		pattern: {
+			value: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+			message: 'Not in email format',
+		},
+	});
 	const usernameRegister = register('username', { required: 'Username is required' });
 	const passwordRegister = register('password', { required: 'Password is required' });
 	const password1Register = register('password1', { required: 'Please check your password.' });
@@ -77,10 +83,15 @@ const JoinPresenter = ({ onSubmit, register, erorrs }) => {
 				<Description>
 					Create your albums to memorize your Descriptionecial moment and share with others
 				</Description>
-				<StyledInput {...emailRegister} type="email" placeholder="Email" />
+				<StyledInput {...emailRegister} type="text" placeholder="Email" />
+				<span>{errors?.email?.message}</span>
 				<StyledInput {...usernameRegister} type="text" placeholder="Username" />
+				<span>{errors?.username?.message}</span>
 				<StyledInput {...passwordRegister} type="password" placeholder="Password" />
+				<span>{errors?.password?.message}</span>
 				<StyledInput {...password1Register} type="password" placeholder="Password Verification" />
+				<span>{errors?.password1?.message}</span>
+				<span>{errors?.extraError?.message}</span>
 				<Button>Sign Up</Button>
 			</MainForm>
 			<AskForLogin>
