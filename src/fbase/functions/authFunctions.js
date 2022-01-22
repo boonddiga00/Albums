@@ -1,5 +1,5 @@
 import { authService } from 'fbase/firebaseInstance';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signOut, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getAuthAsync, resetAuthAction } from 'Store/Actions/authAction';
 
 export const subscribeAuth = (dispatch) => {
@@ -15,4 +15,9 @@ export const subscribeAuth = (dispatch) => {
 
 export const logOut = () => {
 	signOut(authService);
+};
+
+export const createUserAuth = async (email, password) => {
+	const { user } = await createUserWithEmailAndPassword(authService, email, password);
+	return user;
 };

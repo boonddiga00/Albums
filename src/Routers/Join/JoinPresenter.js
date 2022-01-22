@@ -1,9 +1,5 @@
 import styled from 'styled-components';
-import { useHistory, Link } from 'react-router-dom';
-import { useInput } from 'Hooks';
-import { setUserById } from 'fbase/functions/userFunctions';
-import { authService } from 'fbase/firebaseInstance';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { Link } from 'react-router-dom';
 
 const Wrapper = styled.div`
 	height: 90vh;
@@ -69,54 +65,22 @@ const LoginLink = styled(Link)`
 	text-decoration: underline;
 `;
 
-const Join = () => {
-	const [inputEmail, onChangeInputEmail] = useInput('');
-	const [username, onChangeUsername] = useInput('');
-	const [password, onChangePassword] = useInput('');
-	const history = useHistory();
-	const onSubmitJoin = async (event) => {
-		event.preventDefault();
-		const {
-			user: { uid, email, photoURL },
-		} = await createUserWithEmailAndPassword(authService, inputEmail, password);
-		try {
-			await setUserById(uid, {
-				uid,
-				username,
-				email,
-				photoURL,
-				albums: [],
-			});
-		} catch (error) {
-			console.error('Error adding document: ', error);
-		}
-		history.push(`/user/${uid}`);
-	};
+const JoinPresenter = ({ onSubmit, register, erorrs }) => {
+	const emailRegister = register('email', { required: 'Email is required' });
+	const usernameRegister = register('username', { required: 'Username is required' });
+	const passwordRegister = register('password', { required: 'Password is required' });
+	const password1Register = register('password1', { required: 'Please check your password.' });
 	return (
 		<Wrapper>
-			<MainForm onSubmit={onSubmitJoin}>
+			<MainForm onSubmit={onSubmit}>
 				<Logo>Albums</Logo>
 				<Description>
 					Create your albums to memorize your Descriptionecial moment and share with others
 				</Description>
-				<StyledInput
-					type="email"
-					placeholder="Email"
-					value={inputEmail}
-					onChange={onChangeInputEmail}
-				/>
-				<StyledInput
-					type="text"
-					placeholder="Username"
-					value={username}
-					onChange={onChangeUsername}
-				/>
-				<StyledInput
-					type="password"
-					placeholder="Password"
-					value={password}
-					onChange={onChangePassword}
-				/>
+				<StyledInput {...emailRegister} type="email" placeholder="Email" />
+				<StyledInput {...usernameRegister} type="text" placeholder="Username" />
+				<StyledInput {...passwordRegister} type="password" placeholder="Password" />
+				<StyledInput {...password1Register} type="password" placeholder="Password Verification" />
 				<Button>Sign Up</Button>
 			</MainForm>
 			<AskForLogin>
@@ -126,4 +90,5 @@ const Join = () => {
 		</Wrapper>
 	);
 };
-export default Join;
+
+export default JoinPresenter;
