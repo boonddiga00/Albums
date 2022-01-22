@@ -1,9 +1,5 @@
 import styled from 'styled-components';
-import { useState } from 'react';
-import { useInput } from 'Hooks';
-import { useHistory, Link } from 'react-router-dom';
-import { authService } from 'fbase/firebaseInstance';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { Link } from 'react-router-dom';
 
 const Wrapper = styled.div`
 	height: 90vh;
@@ -76,54 +72,30 @@ const ErrorMessage = styled.span`
 	margin-top: 20px;
 `;
 
-const Login = () => {
-	const [errorMessage, setErrorMessage] = useState('');
-	const [email, onChangeEmail] = useInput('');
-	const [password, onChangePassword] = useInput('');
-	const history = useHistory();
-	const onSubmitLogin = async (event) => {
-		event.preventDefault();
-		try {
-			await signInWithEmailAndPassword(authService, email, password);
-			history.push('/');
-		} catch (error) {
-			console.dir(error);
-			switch (error.code) {
-				case 'auth/wrong-password':
-					setErrorMessage('Wrong Password.');
-					break;
-				case 'auth/invalid-email':
-					setErrorMessage('Invalid Email.');
-					break;
-				case 'auth/user-not-found':
-					setErrorMessage("We can't find your email.");
-					break;
-				case 'auth/too-many-requests':
-					setErrorMessage('Access to this account has been temporarily disabled');
-					break;
-				default:
-					setErrorMessage('Something went wrong.. please try again.');
-			}
-		}
-	};
+const LoginPresenter = ({ onSubmit, register, errors }) => {
+	const emailRegister = register('email', {
+		required: 'Email is required',
+		pattern: {
+			value: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+			message: 'Not in email format',
+		},
+	});
+	const passwordRegister = register('password', { required: 'Password is required' });
 	return (
 		<Wrapper>
-			<MainForm onSubmit={onSubmitLogin}>
+			<MainForm onSubmit={onSubmit}>
 				<Logo>
 					<Link to="/">Albums</Link>
 				</Logo>
 				<Description>
 					Create your albums to memorize your Descriptionecial moment and share with others
 				</Description>
-				<StyledInput type="text" placeholder="Email" value={email} onChange={onChangeEmail} />
-				<StyledInput
-					type="password"
-					placeholder="Password"
-					value={password}
-					onChange={onChangePassword}
-				/>
+				<StyledInput {...emailRegister} type="text" placeholder="Email" />
+				<ErrorMessage>{errors?.email?.message}</ErrorMessage>
+				<StyledInput {...passwordRegister} type="password" placeholder="Password" />
+				<ErrorMessage>{errors?.password?.message}</ErrorMessage>
 				<Button>Login</Button>
-				{errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+				<ErrorMessage>{errors?.extraError?.message}</ErrorMessage>
 			</MainForm>
 			<AskForJoin>
 				<Question>Don't have an account?</Question>
@@ -133,4 +105,4 @@ const Login = () => {
 	);
 };
 
-export default Login;
+export default LoginPresenter;
