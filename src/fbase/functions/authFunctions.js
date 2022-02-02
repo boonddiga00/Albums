@@ -5,9 +5,11 @@ import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { getAuthAsync, resetAuthAction } from 'Store/Actions/authAction';
+import { useSetRecoilState, useResetRecoilState } from 'recoil';
+import { currentUserUidState, initState } from 'atoms';
+import { getUserById } from 'fbase/functions/userFunctions';
 
-export const subscribeAuth = (dispatch) => {
+/* export const subscribeAuth = (dispatch) => {
 	onAuthStateChanged(authService, (authUser) => {
 		if (authUser) {
 			const { uid } = authUser;
@@ -16,6 +18,10 @@ export const subscribeAuth = (dispatch) => {
 			dispatch(resetAuthAction());
 		}
 	});
+}; */
+
+export const subscribeAuth = () => {
+
 };
 
 export const logOut = () => {

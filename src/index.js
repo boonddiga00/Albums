@@ -1,14 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import store from 'Store';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { RecoilRoot } from 'recoil';
 import App from 'Components/App';
+
+const queryClient = new QueryClient();
 
 ReactDOM.render(
 	<React.StrictMode>
-		<Provider store={store}>
-			<App />
-		</Provider>
+		<QueryClientProvider client={queryClient}>
+			<RecoilRoot>
+				<App />
+			</RecoilRoot>
+		</QueryClientProvider>
 	</React.StrictMode>,
 	document.getElementById('root')
 );

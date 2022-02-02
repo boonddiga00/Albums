@@ -21,22 +21,33 @@ const Join = () => {
 		setValue,
 	} = useForm();
 	const history = useHistory();
-	const onSubmit = async (data) => {
-		const { email, username, password, password1 } = data;
+	const setPasswordNotEqualError = () => {
+		setError('password1', { message: 'Passwords do not match.' }, { shouldFocus: true });
+		setValue('password1', '');
+	};
+	const setFirebaseError = {
+		passwordToShort: () => {
+			setError('extraError', { message: 'Password is to Short.' });
+		},
+		serverError: () => {
+			setError('extraError', { message: 'Something went wrong, please try again.' });
+		},
+	};
+	const onSubmit = async ({ email, username, password, password1 }) => {
 		if (password !== password1) {
-			setError('password1', { message: 'Passwords do not match.' }, { shouldFocus: true });
-			setValue('password1', '');
+			setPasswordNotEqualError();
 			return;
 		}
 		try {
 			const { uid } = await createUserAuth(email, password);
 			await addUserOnDb({ uid, email, username });
-			history.push(`/user/${uid}`);
+			const makeUserProfilePath = (uid) => `/user/${uid}`;
+			history.push(makeUserProfilePath(uid));
 		} catch (error) {
-			if(error.code === "auth/weak-password") {
-				setError('extraError', {message: 'Password is to Short.'});
+			if (error.code === 'auth/weak-password') {
+				setFirebaseError.passwordToShort();
 			} else {
-				setError('extraError', {message: 'Something went wrong, please try again.'})
+				setFirebaseError.serverError();
 			}
 		}
 	};

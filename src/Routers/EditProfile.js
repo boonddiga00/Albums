@@ -1,23 +1,23 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useRecoilValue } from 'recoil';
+import { currentUserState } from 'atoms';
 import { useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useInput } from 'Hooks';
+import { useForm } from 'react-hook-form';
 import { updateUserById } from 'fbase/functions/userFunctions';
 import { uploadProfileImage } from 'fbase/functions/storageFunctions';
-import { getAuthAsync } from 'Store/Actions/authAction';
 import EditProfileImage from 'Components/EditProfileImage';
 
 const EditProfile = () => {
-	const { currentUser } = useSelector((state) => state);
-	const dispatch = useDispatch();
+	const { currentUser } = useRecoilValue();
 	const [preview, setPreview] = useState('');
-	const [username, onChangeUsername] = useInput(currentUser.username || '');
-	const [description, onChangeDescription] = useInput(currentUser.description || '');
-	const submitBtn = useRef();
+	const { register, handleSubmit } = useForm();
 	const history = useHistory();
-	const onSubmitProfileEdit = async (event) => {
-		event.preventDefault();
-		if (!preview && username === currentUser.username && description === currentUser.description) {
+	const submitBtn = useRef();
+
+	const onSubmit = async ({ username, description }) => {
+		const checkAnythingChanged =
+			!preview && username === currentUser.username && description === currentUser.description;
+		if (checkAnythingChanged) {
 			return;
 		}
 		submitBtn.current.disabled = true;
@@ -32,30 +32,33 @@ const EditProfile = () => {
 		if (description !== currentUser.description) {
 			await updateUserById(uid, { description });
 		}
-		dispatch(getAuthAsync(uid));
+		// refresh user
 		history.push(`/user/${uid}`);
 	};
+
 	return (
-		<form onSubmit={onSubmitProfileEdit}>
+		<>
 			<EditProfileImage preview={preview} setPreview={setPreview} />
-			<label htmlFor="username">Username</label>
-			<input
-				id="username"
-				type="text"
-				placeholder="Username"
-				value={username}
-				onChange={onChangeUsername}
-			/>
-			<label htmlFor="description">Description</label>
-			<input
-				id="description"
-				type="text"
-				placeholder="Description"
-				value={description}
-				onChange={onChangeDescription}
-			/>
-			<input ref={submitBtn} type="submit" value="Submit" />
-		</form>
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<label htmlFor="username">Username</label>
+				<input
+					id="username"
+					type="text"
+					placeholder="Username"
+					{...register('username', { value: currentUser.username })}
+					defaultValue={currentUser.username}
+				/>
+				<label htmlFor="description">Description</label>
+				<input
+					id="description"
+					type="text"
+					placeholder="Description"
+					{...register('description')}
+					defaultValue={currentUser.description}
+				/>
+				<input ref={submitBtn} type="submit" value="Submit" />
+			</form>
+		</>
 	);
 };
 

@@ -19,3 +19,8 @@ export const getAlbumById = async (id) => {
 	const album = extractAlbumFromSnapshot(albumDocumentSnapshot);
 	return album;
 };
+
+export const getAlbums = async (albumUrls) => {
+	const albumArr = await Promise.all(albumUrls.map((albumId) => getAlbumById(albumId)));
+	return albumArr;
+};

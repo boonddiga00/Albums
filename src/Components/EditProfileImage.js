@@ -5,8 +5,8 @@ const EditProfileImage = ({ preview, setPreview }) => {
 	const { currentUser } = useSelector((state) => state);
 	const [isEditing, setIsEditing] = useState(false);
 	const changeBtn = useRef();
+
 	const onClickChangeBtn = (event) => {
-		event.preventDefault();
 		if (!isEditing) {
 			changeBtn.current.textContent = 'Cancle';
 		} else {
@@ -55,9 +55,9 @@ const EditProfileImage = ({ preview, setPreview }) => {
 					<input onChange={onChangeProfilePhoto} type="file" accept="image/*" />
 				</>
 			)}
-			<div ref={changeBtn} onClick={onClickChangeBtn}>
+			<button ref={changeBtn} onClick={onClickChangeBtn}>
 				{!isEditing ? 'Change Profile Image' : 'Cancle'}
-			</div>
+			</button>
 		</div>
 	);
 };
