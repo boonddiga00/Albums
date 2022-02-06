@@ -1,5 +1,5 @@
-import { useRecoilValue } from 'recoil';
-import { currentUserState } from 'atoms';
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil';
+import { currentUserState, currentUserUidState, useRefreshCurrentUser } from 'atoms';
 import { useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -8,11 +8,13 @@ import { uploadProfileImage } from 'fbase/functions/storageFunctions';
 import EditProfileImage from 'Components/EditProfileImage';
 
 const EditProfile = () => {
-	const { currentUser } = useRecoilValue();
+	const currentUserUid = useRecoilValue(currentUserUidState);
+	const { contents: currentUser } = useRecoilValueLoadable(currentUserState);
 	const [preview, setPreview] = useState('');
 	const { register, handleSubmit } = useForm();
 	const history = useHistory();
 	const submitBtn = useRef();
+	const refreshCurrentUser = useRefreshCurrentUser()
 
 	const onSubmit = async ({ username, description }) => {
 		const checkAnythingChanged =
@@ -21,19 +23,18 @@ const EditProfile = () => {
 			return;
 		}
 		submitBtn.current.disabled = true;
-		const { uid } = currentUser;
 		if (preview) {
-			const uploadedProfileURL = await uploadProfileImage(uid, preview);
-			await updateUserById(uid, { photoURL: uploadedProfileURL });
+			const uploadedProfileURL = await uploadProfileImage(currentUserUid, preview);
+			await updateUserById(currentUserUid, { photoURL: uploadedProfileURL });
 		}
 		if (username !== currentUser.username) {
-			await updateUserById(uid, { username });
+			await updateUserById(currentUserUid, { username });
 		}
 		if (description !== currentUser.description) {
-			await updateUserById(uid, { description });
+			await updateUserById(currentUserUid, { description });
 		}
-		// refresh user
-		history.push(`/user/${uid}`);
+		refreshCurrentUser();
+		history.push(`/user/${currentUserUid}`);
 	};
 
 	return (

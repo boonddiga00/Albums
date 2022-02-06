@@ -1,34 +1,16 @@
 import GlobalStyles from 'Styles/GlobalStyles';
-import { useState, useEffect } from 'react';
 import AppRouter from 'Components/Router';
-import { authService } from 'fbase/firebaseInstance';
-import { onAuthStateChanged } from 'firebase/auth';
-import { useSetRecoilState, useResetRecoilState } from 'recoil';
-import { currentUserUidState } from 'atoms';
+import { useSubscribeAuth } from 'fbase/functions/authFunctions';
 
 const App = () => {
-	const [init, setInit] = useState(false);
-	const setUid = useSetRecoilState(currentUserUidState);
-	const refreshUid = useResetRecoilState(currentUserUidState);
-	useEffect(() => {
-		onAuthStateChanged(authService, (authUser) => {
-			if (authUser) {
-				const { uid } = authUser;
-				setUid(uid);
-				setInit(true);
-			} else {
-				refreshUid();
-				setInit(true);
-			}
-		});
-	}, [refreshUid, setInit, setUid]);
+	const init = useSubscribeAuth();
 	return init ? (
 		<>
 			<GlobalStyles />
 			<AppRouter />
 		</>
 	) : (
-		<p>Loading...</p>
+		<p>Initializing...</p>
 	);
 };
 

@@ -1,4 +1,4 @@
-import { atom, selectorFamily, selector } from 'recoil';
+import { atom, selectorFamily, selector, useSetRecoilState } from 'recoil';
 import { getUserById } from 'fbase/functions/userFunctions';
 import { getAlbums } from 'fbase/functions/albumFunctions';
 
@@ -15,38 +15,20 @@ export const isLoggedInState = selector({
 	},
 });
 
-export const currentUserState = selector({
+const currentUserRequest = atom({ key: 'currentUserRequest', default: 0 });
+
+export const currentUserState = atom({
 	key: 'currentUserState',
-	get: async ({ get }) => {
-		const uid = get(currentUserUidState);
-		if (uid) {
-			const currentUserObj = await getUserById(uid);
-			return currentUserObj;
-		} else {
-			return null;
-		}
-	},
+	default: selector({
+		key: 'currentUserState/Defalut',
+		get: async ({ get }) => {
+			get(currentUserRequest);
+			return await getUserById(get(currentUserUidState));
+		},
+	}),
 });
 
-export const userState = selectorFamily({
-	key: 'userSelector',
-	get: (uid) => async ({ get }) => {
-		const currentUserUid = get(currentUserUidState);
-		if (uid === currentUserUid) {
-			const { currentUser } = get(currentUserState);
-			return currentUser;
-		} else {
-			const user = await getUserById(uid);
-			return user;
-		}
-	},
-});
-
-export const albumState = selector({
-	key: 'albumState',
-	get: async ({ get }) => {
-		const { uid, albumUrls } = get(userState);
-		const currentUserUid = get(currentUserUidState);
-		return await getAlbums(albumUrls);
-	},
-});
+export const useRefreshCurrentUser = () => {
+	const setCurrentUserRequest = useSetRecoilState(currentUserRequest);
+	return () => setCurrentUserRequest((prev) => prev + 1);
+};

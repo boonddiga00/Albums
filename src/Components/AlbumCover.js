@@ -2,17 +2,17 @@ import { useQuery } from 'react-query';
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { currentUserUidState } from 'atoms';
+import { currentUserUidState, useRefreshCurrentUser } from 'atoms';
 import { getAlbumById } from 'fbase/functions/albumFunctions';
 import { deleteAlbum } from 'fbase/functions/multiFunctions';
+import { queryClient } from 'index';
 
 const AlbumCover = ({ uid, albumId }) => {
 	const { isLoading, data: album } = useQuery(['albumCover', albumId], () => getAlbumById(albumId));
-	console.log(album);
 	const currentUserUid = useRecoilValue(currentUserUidState);
-	const deleteButton = useRef();
 	const onClickDeleteBtn = async (albumId) => {
 		await deleteAlbum(albumId, uid);
+		queryClient.invalidateQueries(['userProfile', uid]);
 	};
 	return isLoading ? (
 		<h1>Loading...</h1>
@@ -30,11 +30,7 @@ const AlbumCover = ({ uid, albumId }) => {
 					<p>{album.description}</p>
 				</div>
 			</Link>
-			{currentUserUid === uid && (
-				<button ref={deleteButton} onClick={(e) => onClickDeleteBtn(albumId)}>
-					Delete
-				</button>
-			)}
+			{currentUserUid === uid && <button onClick={(e) => onClickDeleteBtn(albumId)}>Delete</button>}
 		</>
 	);
 

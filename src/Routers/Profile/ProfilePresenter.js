@@ -4,7 +4,6 @@ import { logOut } from 'fbase/functions/authFunctions';
 import { useHistory } from 'react-router-dom';
 
 const ProfilePresenter = ({ isLoading, user }) => {
-	console.log(user);
 	const history = useHistory();
 	const onClickLogOut = () => {
 		logOut();

@@ -6,9 +6,8 @@ import ProfilePresenter from 'Routers/Profile/ProfilePresenter';
 
 const ProfileContainer = () => {
 	const { uid } = useParams();
-	console.log(uid);
 	const { isLoading, data } = useQuery(['userProfile', uid], () => getUserById(uid));
-	return <ProfilePresenter isLoading={isLoading} user={data} />;
+	return <ProfilePresenter isLoading={isLoading} user={data}/>;
 };
 
 export default ProfileContainer;

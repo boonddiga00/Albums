@@ -34,10 +34,8 @@ const ProfileImage = styled.img`
 const Header = () => {
 	const isLoggedIn = useRecoilValue(isLoggedInState);
 	const currentUser = useRecoilValueLoadable(currentUserState);
-	console.log(currentUser);
 	return (
-		isLoggedIn &&
-		currentUser.state === 'hasValue' && (
+		isLoggedIn && (
 			<NavBar>
 				<Logo>Albums</Logo>
 				<Nav>
@@ -47,14 +45,18 @@ const Header = () => {
 					<li>
 						<Link to="/create/cover">Upload Album</Link>
 					</li>
-					<li>
-						<Link to={`/user/${currentUser.contents.uid}/edit`}>Edit Profile</Link>
-					</li>
-					<li>
-						<Link to={`/user/${currentUser.contents.uid}`}>
-							<ProfileImage src={currentUser.contents.photoURL} alt="Profile" />
-						</Link>
-					</li>
+					{currentUser.state === 'hasValue' && (
+						<>
+							<li>
+								<Link to={`/user/${currentUser.contents.uid}/edit`}>Edit Profile</Link>
+							</li>
+							<li>
+								<Link to={`/user/${currentUser.contents.uid}`}>
+									<ProfileImage src={currentUser.contents.photoURL} alt="Profile" />
+								</Link>
+							</li>
+						</>
+					)}
 				</Nav>
 			</NavBar>
 		)

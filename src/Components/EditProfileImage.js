@@ -1,8 +1,9 @@
 import { useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useRecoilValueLoadable } from 'recoil';
+import { currentUserState } from 'atoms';
 
 const EditProfileImage = ({ preview, setPreview }) => {
-	const { currentUser } = useSelector((state) => state);
+	const currentUser = useRecoilValueLoadable(currentUserState);
 	const [isEditing, setIsEditing] = useState(false);
 	const changeBtn = useRef();
 
@@ -33,7 +34,7 @@ const EditProfileImage = ({ preview, setPreview }) => {
 			{!isEditing ? (
 				<img
 					src={
-						currentUser.photoURL ||
+						currentUser.contents.photoURL ||
 						'https://cdn0.iconfinder.com/data/icons/set-ui-app-android/32/8-512.png'
 					}
 					alt="User Profile"
